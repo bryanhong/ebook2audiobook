@@ -28,7 +28,7 @@ ENV UNIDIC_DIR=/root/.local/share/unidic
 # Second stage for PyTorch installation + swappable base image if you want to use a pulled image
 FROM $BASE_IMAGE AS pytorch
 # Add parameter for PyTorch version with a default empty value
-ARG TORCH_VERSION=""
+ARG TORCH_VERSION="cuda128"
 # Add parameter to control whether to skip the XTTS test
 ARG SKIP_XTTS_TEST="false"
 
@@ -59,7 +59,7 @@ RUN if [ ! -z "$TORCH_VERSION" ]; then \
                 pip install --no-cache-dir $TORCH_SPEC $TORCHVISION_SPEC $TORCHAUDIO_SPEC --extra-index-url https://download.pytorch.org/whl/cu121 \
                 ;; \
             "cuda128") \
-                pip install --no-cache-dir $TORCH_SPEC $TORCHVISION_SPEC $TORCHAUDIO_SPEC --extra-index-url https://download.pytorch.org/whl/nightly/cu128 \
+                pip uninstall torch && pip install --pre torch torchvision torchaudio --index-url https://download.pytorch.org/whl/nightly/cu128 \
                 ;; \
             "cuda11") \
                 pip install --no-cache-dir $TORCH_SPEC $TORCHVISION_SPEC $TORCHAUDIO_SPEC --extra-index-url https://download.pytorch.org/whl/cu118 \

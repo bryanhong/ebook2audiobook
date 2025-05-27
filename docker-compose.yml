@@ -12,18 +12,21 @@ services:
   ebook2audiobook:
     # Docker GPU Options
     # Available tags: latest (CUDA 11), cpu, rocm, cuda11, cuda12, xpu (x86 only), lite
-    image: docker.io/athomasson2/ebook2audiobook:lite
+    build:
+      context: .
+      dockerfile: Dockerfile
+    #image: athomasson2/ebook2audiobook:cuda128
     pull_policy: always
     entrypoint: ["python", "app.py", "--script_mode", "full_docker"]
     command: [] # <- Extra ebook2audiobook parameters can be added here
     tty: true
     stdin_open: true
     ports:
-      - 7860:7860 # Maps container's port 7860 to the host's port 7860.
+      - 8000:7860 # Maps container's port 7860 to the host's port 7860.
     deploy:
       resources:
         reservations:
-          <<: *gpu-disabled # Use *gpu-enabled if you have an NVIDIA GPU.
+          <<: *gpu-enabled # Use *gpu-enabled if you have an NVIDIA GPU.
           # --- CPU Memory (RAM) Reservation ---
           # memory: 4g   # Uncomment to reserve 4GB of system RAM (minimum required by the container).
           # --- GPU VRAM (Indirect Control) ---
@@ -41,8 +44,8 @@ services:
           #     count: 1 # Use fractional GPU count (e.g., 0.5) to indirectly limit VRAM.
           #     capabilities:
           #       - gpu
-    volumes:
-      - ./:/app  # Maps the local directory to the container.
+#    volumes:
+#      - ./:/app  # Maps the local directory to the container.
 
 # Common Issues: ----
 # --> `python: can't open file '/home/user/app/app.py': [Errno 2] No such file or directory`
